@@ -1,0 +1,164 @@
+# Scraping de Imóveis - João Pessoa
+
+## 📋 Entendimento do Projeto
+
+Este projeto realiza o scraping automatizado de apartamentos à venda no site www.imoveisjoaopessoa.com.br usando a ferramenta Firecrawl. A solução é parametrizada e reprodutível, salvando os dados extraídos em formatos CSV e JSON.
+
+## 🎯 Objetivos
+
+1. Extrair dados detalhados de apartamentos à venda
+2. Salvar os dados em formatos CSV e JSON
+3. Código parametrizado e facilmente configurável
+4. Solução reprodutível e escalável
+
+## 🛠️ Estratégia Técnica
+
+### Método Escolhido: Crawl + Extract
+
+Após análise da documentação do Firecrawl, optamos pelo método **Crawl** combinado com **Extract** pelos seguintes motivos:
+
+- **Crawl**: Permite navegar recursivamente por todas as páginas de listagem
+- **Extract**: Usa LLM para extrair dados estruturados automaticamente
+- **Vantagem**: Mais robusto que Map (que apenas lista URLs) e mais abrangente que Scrape (que processa apenas uma página)
+
+### Estrutura de Dados
+
+Os dados dos imóveis serão extraídos com os seguintes campos:
+- Título do anúncio
+- Endereço/Localização
+- Preço
+- Área (m²)
+- Número de quartos
+- Número de banheiros
+- Número de vagas
+- Descrição
+- Características/Amenidades
+- Link do anúncio
+- Imagens (URLs)
+- Código do imóvel
+- Nome da imobiliária/Corretor
+
+## 🚀 Como Usar
+
+### Pré-requisitos
+
+1. Python 3.8+
+2. Conta no Firecrawl (https://www.firecrawl.dev/)
+3. API Key do Firecrawl
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone <seu-repositorio>
+cd scraping-claude
+
+# Crie um ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou
+venv\Scripts\activate  # Windows
+
+# Instale as dependências
+pip install -r requirements.txt
+```
+
+### Configuração
+
+1. Copie o arquivo `.env.example` para `.env`
+2. Adicione sua API Key do Firecrawl:
+```
+FIRECRAWL_API_KEY=sua_api_key_aqui
+```
+
+### Execução
+
+```bash
+# Execução básica
+python scraper.py
+
+# Com parâmetros customizados
+python scraper.py --limit 100 --output-dir ./dados --formato json,csv
+```
+
+### Parâmetros Disponíveis
+
+- `--limit`: Número máximo de imóveis para extrair (padrão: 50)
+- `--output-dir`: Diretório para salvar os arquivos (padrão: ./output)
+- `--formato`: Formatos de saída (padrão: json,csv)
+- `--url`: URL inicial para o crawl (padrão: www.imoveisjoaopessoa.com.br)
+
+## 📁 Estrutura do Projeto
+
+```
+scraping-claude/
+├── README.md           # Este arquivo
+├── requirements.txt    # Dependências do projeto
+├── .env.example       # Exemplo de configuração
+├── .gitignore         # Arquivos ignorados pelo git
+├── config.py          # Configurações do projeto
+├── scraper.py         # Script principal
+├── models.py          # Modelos de dados (Pydantic)
+├── utils.py           # Funções auxiliares
+└── output/            # Diretório de saída (gerado)
+    ├── imoveis.json   # Dados em JSON
+    └── imoveis.csv    # Dados em CSV
+```
+
+## 🔧 Tecnologias Utilizadas
+
+- **Firecrawl**: Ferramenta principal de scraping
+- **Pydantic**: Validação e estruturação de dados
+- **Pandas**: Manipulação de dados e exportação para CSV
+- **Python-dotenv**: Gerenciamento de variáveis de ambiente
+
+## 📊 Exemplo de Saída
+
+### JSON
+```json
+{
+  "imoveis": [
+    {
+      "titulo": "Apartamento 3 quartos - Bessa",
+      "preco": 450000.00,
+      "area": 120,
+      "quartos": 3,
+      "banheiros": 2,
+      "vagas": 2,
+      "endereco": "Rua Example, 123 - Bessa",
+      "link": "https://www.imoveisjoaopessoa.com.br/imovel/12345"
+    }
+  ]
+}
+```
+
+### CSV
+```csv
+titulo,preco,area,quartos,banheiros,vagas,endereco,link
+"Apartamento 3 quartos - Bessa",450000.00,120,3,2,2,"Rua Example, 123 - Bessa","https://..."
+```
+
+## ⚠️ Considerações Importantes
+
+1. **Rate Limiting**: O Firecrawl possui limites de requisições. O código implementa retry e backoff automáticos.
+2. **Custos**: Verifique os preços do Firecrawl antes de executar grandes extrações.
+3. **Ética**: Respeite os termos de uso do site alvo e não sobrecarregue seus servidores.
+4. **Dados Pessoais**: Tome cuidado ao lidar com informações sensíveis.
+
+## 🐛 Troubleshooting
+
+### Erro de API Key
+Certifique-se de que a API Key está correta no arquivo `.env`
+
+### Timeout ou Rate Limit
+Ajuste o parâmetro `--limit` para um valor menor ou aguarde antes de tentar novamente
+
+### Dados Faltando
+O site pode ter mudado sua estrutura. Verifique e ajuste os seletores em `models.py`
+
+## 📝 Próximos Passos
+
+- [ ] Adicionar filtros por preço, área, localização
+- [ ] Implementar notificações de novos imóveis
+- [ ] Criar dashboard para visualização dos dados
+- [ ] Adicionar suporte para outros sites de imóveis
